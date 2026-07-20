@@ -1,11 +1,25 @@
-{
-  "name": "vpn-bot-pro",
-  "version": "1.0.0",
-  "main": "bot.js",
-  "dependencies": {
-    "grammy": "latest"
-  },
-  "scripts": {
-    "start": "node bot.js"
+const { Bot } = require("grammy");
+const fetch = require("node-fetch");
+
+const bot = new Bot("8854649813:AAF7R41krqbpGP-tA_psymNhL2ktW81yjVA");
+
+bot.command("start", (ctx) => ctx.reply("VPN Bot အဆင်သင့်ပါ။ /getfreekey လို့ ရိုက်ပြီး Key အသစ်ယူပါ။"));
+
+bot.command("getfreekey", async (ctx) => {
+  try {
+    // အလုပ်လုပ်နေတဲ့ Proxy List ယူမယ့် API
+    const response = await fetch("https://v2rayse.com/api/v1/get-proxy");
+    const data = await response.json();
+    
+    // Proxy တစ်ခုကို ရွေးပေးခြင်း
+    const proxy = data.proxies[Math.floor(Math.random() * data.proxies.length)];
+    ctx.reply(`အလုပ်လုပ်နေတဲ့ Key အသစ်:\n\n${proxy.link}`);
+  } catch (error) {
+    ctx.reply("ခဏလေးနော်၊ Proxy ရှာနေပါတယ်။ /getfreekey ကို ပြန်နှိပ်ကြည့်ပေးပါဗျ။");
   }
-}
+});
+
+const http = require('http');
+http.createServer((req, res) => res.end('Bot is running')).listen(process.env.PORT || 3000);
+
+bot.start();
