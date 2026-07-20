@@ -1,13 +1,27 @@
 const { Bot } = require("grammy");
+const axios = require("axios");
+const cheerio = require("cheerio");
+
 const bot = new Bot("8854649813:AAF7R41krqbpGP-tA_psymNhL2ktW81yjVA");
 
-// နေ့စဉ် Update ဖြစ်တဲ့ Proxy Channel လင့်ခ်များ
-const proxySource = "https://t.me/s/v2rayng_org"; // ဒီ Channel ကနေ အစ်ကို့ဘာသာ ယူလို့ရပါတယ်
-
-bot.command("start", (ctx) => ctx.reply("VPN Bot အဆင်သင့်ပါ။ /getfreekey လို့ ရိုက်ပါ။"));
-
-bot.command("getfreekey", (ctx) => {
-    ctx.reply(`အစ်ကိုရေ၊ Proxy တွေအမြဲ Update ဖြစ်နေတဲ့ Channel မှာ ယူလိုက်ပါဗျာ။ ဒါက အသေချာဆုံးပါ:\n\n${proxySource}\n\nဒီ Link ထဲက ss:// သို့မဟုတ် vmess:// နဲ့စတဲ့ဟာတွေကို Copy ကူးပြီး V2RayNG ထဲမှာ Import လုပ်လိုက်ပါနော်။`);
+bot.command("getfreekey", async (ctx) => {
+    ctx.reply("ခဏလေးနော်... Proxy စာမျက်နှာကို တိုက်ရိုက်ဖတ်နေပါပြီ...");
+    try {
+        // Proxy တွေတင်တဲ့ site ကနေ တိုက်ရိုက်ဆွဲထုတ်ခြင်း
+        const { data } = await axios.get("https://free-ss.site/");
+        const $ = cheerio.load(data);
+        
+        // Site ထဲက ss:// လင့်ခ်တွေကို ရှာယူခြင်း
+        const key = $("code").first().text(); 
+        
+        if (key.startsWith("ss://")) {
+            ctx.reply(`ရပြီ အစ်ကို! ဒါကတိုက်ရိုက်ဆွဲထားတဲ့ Key ပါ:\n\n${key}`);
+        } else {
+            ctx.reply("Proxy လင့်ခ်အသစ် မတွေ့သေးလို့ပါ။");
+        }
+    } catch (e) {
+        ctx.reply("Server အလုပ်မလုပ်သေးလို့ပါ။ ခဏနေမှ ပြန်ကြိုးစားပေးပါဗျ။");
+    }
 });
 
 const http = require('http');
